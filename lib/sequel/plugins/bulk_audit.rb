@@ -26,7 +26,7 @@ module Sequel
           db.transaction do
             trid = db.select(Sequel.function(:txid_current)).single_value
             data = db.select(Sequel.expr(current_user&.id || 0).as(:user_id),
-                             Sequel.cast(current_user&.login || "unspecified", :text).as(:username),
+                             Sequel.cast(current_user&.login || current_user&.username || "unspecified", :text).as(:username),
                              Sequel.pg_jsonb(model_to_table_map).as(:model_map),
                              Sequel.pg_jsonb(attributes || {}).as(:data))
             db.create_table!(:"__audit_info_#{trid}", temp: true, as: data)
